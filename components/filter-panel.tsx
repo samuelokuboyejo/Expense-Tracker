@@ -72,7 +72,7 @@ export default function FilterPanel({
     <Card className="card-modern border-0 sticky top-8 animate-fade-in">
       <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-accent/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold">Filters & Export</CardTitle>
+          <CardTitle className="text-base font-bold">Filters & Download</CardTitle>
           <Button variant="ghost" size="sm" onClick={onToggleFilters} className="gap-2 h-8 w-8 p-0">
             <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-180" : ""}`} />
           </Button>
@@ -173,7 +173,7 @@ export default function FilterPanel({
                 size="sm"
               >
                 <Download className="h-4 w-4" />
-                Export
+                Download
               </Button>
             )}
           </div>
