@@ -8,7 +8,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Naira Tracker',
-  description: 'Created with v0',
+  description: 'A smart and elegant expense tracker designed for Nigerians to easily manage income, salary, and daily expenses.',
 }
 
 export default function RootLayout({

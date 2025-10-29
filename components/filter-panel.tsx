@@ -172,7 +172,7 @@ export default function FilterPanel({
                 size="sm"
               >
                 <Download className="h-4 w-4" />
-                Export
+                Download
               </Button>
             )}
           </div>
