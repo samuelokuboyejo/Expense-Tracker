@@ -4,19 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, Download } from "lucide-react"
-
-const EXPENSE_CATEGORIES = [
-  "Feeding",
-  "Transportation",
-  "Data & Subscription",
-  "Bills",
-  "Personal Saving",
-  "Savings & Investments",
-  "Entertainment",
-  "Others",
-]
-
-const INCOME_CATEGORIES = ["Salary", "Freelance", "Allowance", "Business", "Investment", "Other"]
+import type { Transaction } from "@/app/page"
 
 interface FilterPanelProps {
   onDateFilterChange: (filter: { start: string; end: string } | null) => void
@@ -25,6 +13,7 @@ interface FilterPanelProps {
   showFilters: boolean
   onToggleFilters: () => void
   onExport?: () => void
+  allTransactions?: Transaction[]
 }
 
 export default function FilterPanel({
@@ -34,11 +23,22 @@ export default function FilterPanel({
   showFilters,
   onToggleFilters,
   onExport,
+  allTransactions = [],
 }: FilterPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedType, setSelectedType] = useState<"income" | "expense" | null>(null)
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
+
+  const getUsedCategories = () => {
+    const categories = new Set<string>()
+    allTransactions.forEach((t) => {
+      categories.add(t.category)
+    })
+    return Array.from(categories).sort()
+  }
+
+  const usedCategories = getUsedCategories()
 
   const handleCategoryChange = (category: string) => {
     const newCategory = selectedCategory === category ? null : category
@@ -68,8 +68,6 @@ export default function FilterPanel({
     onTypeFilterChange?.(null)
   }
 
-  const allCategories = [...new Set([...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES])]
-
   return (
     <Card className="card-modern border-0 sticky top-8 animate-fade-in">
       <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-accent/5">
@@ -88,11 +86,10 @@ export default function FilterPanel({
               <Button
                 type="button"
                 onClick={() => handleTypeChange("income")}
-                className={`flex-1 transition-all duration-200 ${
-                  selectedType === "income"
+                className={`flex-1 transition-all duration-200 ${selectedType === "income"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                }`}
+                  }`}
                 size="sm"
               >
                 Income
@@ -100,11 +97,10 @@ export default function FilterPanel({
               <Button
                 type="button"
                 onClick={() => handleTypeChange("expense")}
-                className={`flex-1 transition-all duration-200 ${
-                  selectedType === "expense"
+                className={`flex-1 transition-all duration-200 ${selectedType === "expense"
                     ? "bg-accent text-accent-foreground shadow-md"
                     : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                }`}
+                  }`}
                 size="sm"
               >
                 Expense
@@ -138,22 +134,27 @@ export default function FilterPanel({
           </div>
 
           <div>
-            <label className="text-sm font-semibold text-foreground mb-3 block">Category</label>
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-              {allCategories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 text-left ${
-                    selectedCategory === category
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+            <label className="text-sm font-semibold text-foreground mb-3 block">
+              Category {usedCategories.length > 0 && `(${usedCategories.length})`}
+            </label>
+            {usedCategories.length > 0 ? (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                {usedCategories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryChange(category)}
+                    className={`w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 text-left ${selectedCategory === category
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
+                      }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground py-4 text-center">No categories yet</div>
+            )}
           </div>
 
           <div className="flex gap-2 pt-4 border-t border-border/50">
@@ -172,7 +173,7 @@ export default function FilterPanel({
                 size="sm"
               >
                 <Download className="h-4 w-4" />
-                Download
+                Export
               </Button>
             )}
           </div>

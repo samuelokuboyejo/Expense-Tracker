@@ -68,6 +68,7 @@ export default function Dashboard({
               showFilters={showFilters}
               onToggleFilters={() => setShowFilters(!showFilters)}
               onExport={handleExport}
+              allTransactions={statsTransactions}
             />
           </div>
         </div>
