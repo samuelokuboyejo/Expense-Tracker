@@ -40,7 +40,7 @@ export default function ExportModal({ isOpen, onClose, transactions }: ExportMod
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md bg-background border-border/50 shadow-2xl">
                 <DialogHeader>
-                    <DialogTitle className="text-lg font-bold">Export Transactions</DialogTitle>
+                    <DialogTitle className="text-lg font-bold">Download Transactions</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-3">
@@ -57,7 +57,7 @@ export default function ExportModal({ isOpen, onClose, transactions }: ExportMod
                                 <Download className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-semibold text-foreground">Export as CSV</h3>
+                                <h3 className="font-semibold text-foreground">Download as CSV</h3>
                                 <p className="text-sm text-muted-foreground mt-1">
                                     Spreadsheet format for Excel, Sheets, or data analysis
                                 </p>
@@ -76,7 +76,7 @@ export default function ExportModal({ isOpen, onClose, transactions }: ExportMod
                                 <ImageIcon className="h-5 w-5 text-accent" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-semibold text-foreground">Export as Image</h3>
+                                <h3 className="font-semibold text-foreground">Download as Image</h3>
                                 <p className="text-sm text-muted-foreground mt-1">Beautiful PNG report for sharing or printing</p>
                             </div>
                         </div>
