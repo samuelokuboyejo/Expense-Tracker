@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, Download, ImageIcon } from "lucide-react"
+import { ChevronDown, Download } from "lucide-react"
 import type { Transaction } from "@/app/page"
 import { exportTransactionsToCSV, exportTransactionsToImage } from "@/lib/export-utils"
+import ExportModal from "./export-modal"
 
 interface FilterPanelProps {
   onDateFilterChange: (filter: { start: string; end: string } | null) => void
@@ -28,7 +29,7 @@ export default function FilterPanel({
   const [selectedType, setSelectedType] = useState<"income" | "expense" | null>(null)
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
-  const [showExportOptions, setShowExportOptions] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
 
   const getUsedCategories = () => {
     const categories = new Set<string>()
@@ -71,20 +72,20 @@ export default function FilterPanel({
   const handleExportCSV = () => {
     const filename = `naira-tracker-${new Date().toISOString().split("T")[0]}.csv`
     exportTransactionsToCSV(allTransactions, filename)
-    setShowExportOptions(false)
+    setShowExportModal(false)
   }
 
   const handleExportImage = () => {
     const filename = `naira-tracker-${new Date().toISOString().split("T")[0]}.png`
     exportTransactionsToImage(allTransactions, filename)
-    setShowExportOptions(false)
+    setShowExportModal(false)
   }
 
   return (
     <Card className="card-modern border-0 sticky top-8 animate-fade-in">
       <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-accent/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold">Filters & Download</CardTitle>
+          <CardTitle className="text-base font-bold">Filters & Export</CardTitle>
           <Button variant="ghost" size="sm" onClick={onToggleFilters} className="gap-2 h-8 w-8 p-0">
             <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-180" : ""}`} />
           </Button>
@@ -98,11 +99,10 @@ export default function FilterPanel({
               <Button
                 type="button"
                 onClick={() => handleTypeChange("income")}
-                className={`flex-1 transition-all duration-200 ${
-                  selectedType === "income"
+                className={`flex-1 transition-all duration-200 ${selectedType === "income"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                }`}
+                  }`}
                 size="sm"
               >
                 Income
@@ -110,11 +110,10 @@ export default function FilterPanel({
               <Button
                 type="button"
                 onClick={() => handleTypeChange("expense")}
-                className={`flex-1 transition-all duration-200 ${
-                  selectedType === "expense"
+                className={`flex-1 transition-all duration-200 ${selectedType === "expense"
                     ? "bg-accent text-accent-foreground shadow-md"
                     : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                }`}
+                  }`}
                 size="sm"
               >
                 Expense
@@ -157,11 +156,10 @@ export default function FilterPanel({
                   <button
                     key={category}
                     onClick={() => handleCategoryChange(category)}
-                    className={`w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 text-left ${
-                      selectedCategory === category
+                    className={`w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 text-left ${selectedCategory === category
                         ? "bg-primary text-primary-foreground shadow-md"
                         : "bg-secondary/50 text-foreground hover:bg-secondary border border-border/50"
-                    }`}
+                      }`}
                   >
                     {category}
                   </button>
@@ -181,35 +179,21 @@ export default function FilterPanel({
             >
               Clear
             </Button>
-            <div className="flex-1 relative">
-              <Button
-                onClick={() => setShowExportOptions(!showExportOptions)}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2 transition-all duration-200"
-                size="sm"
-              >
-                <Download className="h-4 w-4" />
-                Download
-              </Button>
-              {showExportOptions && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-background border border-border rounded-lg shadow-lg z-50 overflow-hidden">
-                  <button
-                    onClick={handleExportCSV}
-                    className="w-full px-4 py-3 text-sm text-left hover:bg-secondary/50 transition-colors flex items-center gap-2 border-b border-border/50"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download as CSV
-                  </button>
-                  <button
-                    onClick={handleExportImage}
-                    className="w-full px-4 py-3 text-sm text-left hover:bg-secondary/50 transition-colors flex items-center gap-2"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    Download as Image
-                  </button>
-                </div>
-              )}
-            </div>
+            <Button
+              onClick={() => setShowExportModal(true)}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground gap-2 transition-all duration-200"
+              size="sm"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
           </div>
+
+          <ExportModal
+            isOpen={showExportModal}
+            onClose={() => setShowExportModal(false)}
+            transactions={allTransactions}
+          />
         </CardContent>
       )}
     </Card>
